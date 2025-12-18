@@ -1,13 +1,17 @@
-package com.auth.ums.Service;
+package com.auth.ums.Service.UserService;
 
 import com.auth.ums.Mapper.UserMapper;
 import com.auth.ums.Models.User;
 import com.auth.ums.Repository.UserRepository;
 import com.auth.ums.RequestModel.AddUserRequest;
 import com.auth.ums.RequestModel.LoginRequest;
+import com.auth.ums.RequestModel.UserRoleRequestModel.AddUserRoleRequest;
 import com.auth.ums.ResponseModel.ApiResponse;
 import com.auth.ums.ResponseModel.user.UserResponse;
+import com.auth.ums.Service.RoleService.RoleService;
+import com.auth.ums.Service.UserRoleService.UserRoleService;
 import com.auth.ums.Utility.Utility;
+import com.auth.ums.configs.ApiResponseCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,9 +23,18 @@ public class UserServiceImpl implements UserService {
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    RoleService roleService;
+    @Autowired
+    UserRoleService userRoleService;
+
+
     @Override
     public ApiResponse<User> adduser(AddUserRequest request) {
+
+     //   UserResponse response = new UserResponse();
         Optional<User> optionalEmail = userRepository.findByEmail(request.getEmail());
+
         if (optionalEmail != null && !optionalEmail.isEmpty()) {
             return ApiResponse.failure("Email is Already Used");
         }
@@ -35,7 +48,19 @@ public class UserServiceImpl implements UserService {
         user.setIsActive(true);
         user.setIsDeleted(false);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+    //    response.setUser(UserMapper.toUserDTO(user));
         userRepository.save(user);
+
+        ///  add GUEST Role to the user
+          var roleResponse=roleService.getRoleByName("GUEST");
+          if(roleResponse!=null &&roleResponse.getCode().equals(ApiResponseCodes.SUCCESS)){
+              AddUserRoleRequest addRole=new AddUserRoleRequest();
+              addRole.setRoleId(roleResponse.getData().getDto().getId());
+              addRole.setUserId(user.getId());
+              userRoleService.addUserRole(addRole);
+          }
+        ///
+
         return ApiResponse.success(null, "AddSuccessFully");
     }
 
@@ -47,12 +72,10 @@ public class UserServiceImpl implements UserService {
             if (optional.isEmpty()) {
                 return ApiResponse.failure("User not Found");
             }
-
             User user = optional.get();
             if (user.getIsDeleted()) {
                 return ApiResponse.failure("User not found");
             }
-
             if (passwordEncoder.matches(request.getPassword(), optional.get().getPassword())) {
                 response.setUser(UserMapper.toUserDTO(user));
                 return ApiResponse.success(response, "Fetch SuccessFully");

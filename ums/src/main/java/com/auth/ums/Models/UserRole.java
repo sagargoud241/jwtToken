@@ -7,7 +7,6 @@ import lombok.Data;
 @Table(name = "user_role")
 @Data
 public class UserRole extends BaseEntity{
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

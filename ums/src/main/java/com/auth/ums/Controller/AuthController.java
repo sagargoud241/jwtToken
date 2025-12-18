@@ -5,8 +5,8 @@ import com.auth.ums.RequestModel.AddUserRequest;
 import com.auth.ums.RequestModel.LoginRequest;
 import com.auth.ums.ResponseModel.ApiResponse;
 import com.auth.ums.ResponseModel.Auth.LoginResponse;
-import com.auth.ums.Service.AuthService;
-import com.auth.ums.Service.UserService;
+import com.auth.ums.Service.AuthService.AuthService;
+import com.auth.ums.Service.UserService.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
@@ -28,7 +27,7 @@ public class AuthController {
         return ResponseEntity.ok(userService.adduser(request));
     }
     @PostMapping("login")
-    ResponseEntity<ApiResponse<LoginResponse>> logibn(@Valid @RequestBody LoginRequest request){
+    ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request){
         return ResponseEntity.ok(authService.login(request));
     }
 }

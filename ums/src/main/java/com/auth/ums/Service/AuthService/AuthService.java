@@ -1,4 +1,4 @@
-package com.auth.ums.Service;
+package com.auth.ums.Service.AuthService;
 
 import com.auth.ums.RequestModel.LoginRequest;
 import com.auth.ums.ResponseModel.ApiResponse;

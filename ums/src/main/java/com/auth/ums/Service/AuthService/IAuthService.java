@@ -1,16 +1,15 @@
-package com.auth.ums.Service;
+package com.auth.ums.Service.AuthService;
 
 import com.auth.ums.RequestModel.LoginRequest;
 import com.auth.ums.ResponseModel.ApiResponse;
 import com.auth.ums.ResponseModel.Auth.LoginResponse;
-import com.auth.ums.ResponseModel.user.UserResponse;
+import com.auth.ums.Service.UserService.UserService;
 import com.auth.ums.configs.ApiResponseCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class IAuthService implements AuthService {
-
     @Autowired
     UserService userService;
     @Override

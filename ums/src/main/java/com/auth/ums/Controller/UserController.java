@@ -3,7 +3,7 @@ package com.auth.ums.Controller;
 import com.auth.ums.Models.User;
 import com.auth.ums.RequestModel.AddUserRequest;
 import com.auth.ums.ResponseModel.ApiResponse;
-import com.auth.ums.Service.UserService;
+import com.auth.ums.Service.UserService.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
