@@ -7,4 +7,6 @@ import com.auth.ums.ResponseModel.Auth.LoginResponse;
 
 public interface AuthService {
     ApiResponse<LoginResponse> login(LoginRequest request);
+
+    ApiResponse<LoginResponse> refreshToken(String refreshToken);
 }

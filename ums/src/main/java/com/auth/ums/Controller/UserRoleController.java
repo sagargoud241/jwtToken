@@ -6,11 +6,13 @@ import com.auth.ums.RequestModel.UserRoleRequestModel.UpdateUserRoleRequest;
 import com.auth.ums.ResponseModel.ApiResponse;
 import com.auth.ums.ResponseModel.UserRole.UserRoleResponse;
 import com.auth.ums.Service.UserRoleService.UserRoleService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api/v1/user-role")
 public class UserRoleController {

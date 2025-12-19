@@ -7,6 +7,9 @@ import com.auth.ums.ResponseModel.ApiResponse;
 import com.auth.ums.ResponseModel.user.UserResponse;
 
 public interface UserService {
-    ApiResponse<User>adduser(AddUserRequest request);
-    ApiResponse<UserResponse>login(LoginRequest request);
+    ApiResponse<User> adduser(AddUserRequest request);
+
+    ApiResponse<UserResponse> login(LoginRequest request);
+
+    ApiResponse<UserResponse> findByUserId(Long id);
 }

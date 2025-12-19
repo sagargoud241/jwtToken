@@ -1,5 +1,7 @@
 package com.auth.ums.Utility;
 
+import org.springframework.util.DigestUtils;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -18,6 +20,11 @@ public class Utility {
         public static LocalDateTime getCurrentDateTime() {
             return LocalDateTime.now();
         }
+
+//    public static String hashToken(String token) {
+//        return DigestUtils
+//                .sha256Hex(token);
+//        }
     }
 
 

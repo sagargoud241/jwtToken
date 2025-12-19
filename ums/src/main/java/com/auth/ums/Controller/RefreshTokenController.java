@@ -1,9 +1,9 @@
 package com.auth.ums.Controller;
 
-import com.auth.ums.Models.User;
-import com.auth.ums.RequestModel.AddUserRequest;
+import com.auth.ums.RequestModel.RefreshTokenRequestModel.AddRefreshTokenRequest;
 import com.auth.ums.ResponseModel.ApiResponse;
-import com.auth.ums.Service.UserService.UserService;
+import com.auth.ums.ResponseModel.RefreshToken.RefreshTokenResponse;
+import com.auth.ums.Service.RefreshTokenService.RefreshTokenService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @SecurityRequirement(name = "bearerAuth")
 @RestController
-@RequestMapping("/api/v1/user")
-public class UserController {
+@RequestMapping("/api/v1/refreshToken")
+public class RefreshTokenController {
     @Autowired
-    private UserService userService;
-    @PostMapping
-    ResponseEntity<ApiResponse<User>> adduser(@Valid @RequestBody AddUserRequest request){
-        return ResponseEntity.ok(userService.adduser(request));
+    private RefreshTokenService refreshTokenService;
+
+    @PostMapping("/add")
+    ResponseEntity<ApiResponse<RefreshTokenResponse>> addRefreshToken(@Valid @RequestBody AddRefreshTokenRequest request) {
+        return ResponseEntity.ok(refreshTokenService.addRefreshToken(request));
     }
 }
-
-
-

@@ -1,10 +1,7 @@
 package com.auth.ums.Models;
-
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.time.LocalDateTime;
-
 @Data
 @Entity
 @Table(name = "refresh_token")
@@ -15,9 +12,12 @@ public class RefreshToken {
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id", nullable = false)
+    @Column(name = "user_id", nullable = false)
+    private Long userId;
+
 
     @Column(name = "token_hash", nullable = false, unique = true)
     private String tokenHash;
@@ -29,7 +29,7 @@ public class RefreshToken {
     private boolean revoked = false;
 
     @Column(name = "created_date")
-    private LocalDateTime createdDate ;
+    private LocalDateTime createdDate;
 
     @Column(name = "created_by")
     private String createdBy;
@@ -42,6 +42,5 @@ public class RefreshToken {
 
     @Column(name = "is_active")
     private Boolean isActive = true;
-
 
 }

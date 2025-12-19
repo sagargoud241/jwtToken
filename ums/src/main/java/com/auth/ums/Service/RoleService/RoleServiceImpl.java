@@ -156,4 +156,19 @@ public class RoleServiceImpl implements RoleService {
             return ApiResponse.exception(e.getMessage());
         }
     }
+
+    @Override
+    public ApiResponse<RoleResponse> geUserRoleByUserId(Long userId) {
+        RoleResponse response = new RoleResponse();
+        try {
+            List<Role> roles   = roleRepository.geUserRoleByUserId(userId);
+            if (roles.isEmpty()) {
+                return ApiResponse.failure(ÄpiMessageCodes.NO_RESULT_FOUND.toString());
+            }
+            response.setDtos(RoleMapper.toDTOList(roles));
+            return ApiResponse.success(response, ÄpiMessageCodes.FETCH_SUCCESSFULLY.toString());
+        } catch (Exception e) {
+            return ApiResponse.exception(e.getMessage());
+        }
+    }
 }

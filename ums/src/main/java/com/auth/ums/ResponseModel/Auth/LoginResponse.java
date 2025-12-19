@@ -1,5 +1,6 @@
 package com.auth.ums.ResponseModel.Auth;
 
+import com.auth.ums.ResponseModel.user.UserDto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
@@ -17,6 +18,10 @@ public class LoginResponse {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @JsonProperty("token_expiry_time")
-    private LocalDateTime tokenExpiryTime;
+    private String tokenExpiryTime;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @JsonProperty("user")
+    private UserDto user;
 
 }

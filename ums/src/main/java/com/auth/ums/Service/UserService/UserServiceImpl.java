@@ -84,4 +84,19 @@ public class UserServiceImpl implements UserService {
             }
         }
     }
+
+    @Override
+    public ApiResponse<UserResponse> findByUserId(Long id) {
+        UserResponse response = new UserResponse();
+        Optional<User> optional = userRepository.findById(id);
+        if (optional.isEmpty()) {
+            return ApiResponse.failure("User not Found");
+        }
+        User user = optional.get();
+        if (user.getIsDeleted()) {
+            return ApiResponse.failure("User not found");
+        }
+        response.setUser(UserMapper.toUserDTO(user));
+        return ApiResponse.success(response, "Fetch SuccessFully");
+    }
 }

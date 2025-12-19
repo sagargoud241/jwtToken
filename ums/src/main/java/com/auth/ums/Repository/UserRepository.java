@@ -12,5 +12,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByPhoneNumber(@NotBlank(message = "PhoneNumber is Required ") String phoneNumber);
 
     Optional<User> findByEmailAndIsActive(@NotBlank(message = "Email is Required ") String email, boolean isActive);
+
+    Optional<User> findByIdAndIsActive(Long id, boolean isActive);
 }
 
