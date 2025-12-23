@@ -11,6 +11,7 @@ public enum ÄpiMessageCodes {
     DATA_RETRIEVED_SUCCESSFULLY("Data retrieved successfully."),
     NO_RESULT_FOUND("No result found for your requested query."),
     FETCH_SUCCESSFULLY("Fetch successfully."),
+    SUCCESSFUL("Operation successfully."),
     DUPLICATE_DATA_FOUND("Duplicate data found"),
     LOGIN_RESTRICTION("The access to your accounts has been temporarily restricted."),
     LOGIN_FAILED("Invalid credentials."), LOGIN_SUCCESSFULLY("Welcome back to our GME community."),

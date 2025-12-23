@@ -39,11 +39,18 @@ public class SecurityConfig {
                                 //.requestMatchers("/admin/**").hasRole("ADMIN")
 
                                 //********Role controller start *********///
-                                .requestMatchers("/api/v1/role/get-all").hasRole("ADMIN")
-                                .requestMatchers("/api/v1/role/get-all").hasRole("GUEST")
+                               // .requestMatchers("/api/v1/role/get-all").hasRole("ADMIN")
+                                //.requestMatchers("/api/v1/role/get-all").hasRole("GUEST")
+                                .requestMatchers("/api/v1/role/get-all").hasAnyRole("ADMIN", "GUEST")
+
                                 //********Role controller end *********///
 
+                                //.requestMatchers("/api/v1/profile/reset-password").hasRole("ADMIN")
+                                //.requestMatchers("/api/v1/profile/reset-password").hasRole("GUEST")
+                                .requestMatchers("/api/v1/profile/reset-password").hasAnyRole("ADMIN", "GUEST")
+
                                 .anyRequest().authenticated()
+
                         /* ====================================================== */
                 )
                 .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);

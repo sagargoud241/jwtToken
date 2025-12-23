@@ -1,10 +1,13 @@
 package com.auth.ums.Service.UserService;
 
+import com.auth.ums.JwtSecurity.JwtUtil;
 import com.auth.ums.Mapper.UserMapper;
 import com.auth.ums.Models.User;
 import com.auth.ums.Repository.UserRepository;
-import com.auth.ums.RequestModel.AddUserRequest;
-import com.auth.ums.RequestModel.LoginRequest;
+import com.auth.ums.RequestModel.Auth.AddUserRequest;
+import com.auth.ums.RequestModel.Auth.LoginRequest;
+import com.auth.ums.RequestModel.PasswordForgetRequestModel.PasswordChangeByToken;
+import com.auth.ums.RequestModel.ProfileModel.ChangePasswordRequest;
 import com.auth.ums.RequestModel.UserRoleRequestModel.AddUserRoleRequest;
 import com.auth.ums.ResponseModel.ApiResponse;
 import com.auth.ums.ResponseModel.user.UserResponse;
@@ -28,7 +31,8 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserRoleService userRoleService;
 
-
+    @Autowired
+    JwtUtil jwtUtil;
     @Override
     public ApiResponse<User> adduser(AddUserRequest request) {
 
@@ -98,5 +102,70 @@ public class UserServiceImpl implements UserService {
         }
         response.setUser(UserMapper.toUserDTO(user));
         return ApiResponse.success(response, "Fetch SuccessFully");
+    }
+
+    @Override
+    public ApiResponse<UserResponse> changePasswordByLoggedInUser(String userName, ChangePasswordRequest request) {
+
+
+        UserResponse response = new UserResponse();
+        Optional<User> optional = userRepository.findByEmailAndIsActive(userName, true);
+        if (optional.isEmpty()) {
+            return ApiResponse.failure("User not Found");
+        }
+        User user = optional.get();
+        if (user.getIsDeleted()) {
+            return ApiResponse.failure("User not found");
+        }
+        if (passwordEncoder.matches(request.getOldPassword(), optional.get().getPassword())) {
+
+            /// set new password
+            user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            user.setUpdatedBy(jwtUtil.getCurrentUsername());
+            user.setUpdatedDate(LocalDateTime.now());
+            userRepository.save(user);
+
+            response.setUser(UserMapper.toUserDTO(user));
+            return ApiResponse.success(response, "Password Updated Successfully");
+
+        } else {
+            return ApiResponse.failure("User not Found");
+        }
+
+    }
+
+    @Override
+    public ApiResponse<UserResponse> findByUserName(String userName) {
+        UserResponse response = new UserResponse();
+        Optional<User> optional = userRepository.findByEmailAndIsActive(userName, true);
+        if (optional.isEmpty()) {
+            return ApiResponse.failure("User not Found");
+        }
+        User user = optional.get();
+        if (user.getIsDeleted()) {
+            return ApiResponse.failure("User not found");
+        }
+        response.setUser(UserMapper.toUserDTO(user));
+        return ApiResponse.success(response, "Fetch SuccessFully");
+    }
+
+    @Override
+    public ApiResponse<UserResponse> passwordChangeByToken(Long userId, PasswordChangeByToken request) {
+        UserResponse response = new UserResponse();
+        Optional<User> optional = userRepository.findById(userId);
+        if (optional.isEmpty()) {
+            return ApiResponse.failure("User not Found");
+        }
+        User user = optional.get();
+        if (user.getIsDeleted()) {
+            return ApiResponse.failure("User not found");
+        }
+        /// set new password
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setUpdatedBy(jwtUtil.getCurrentUsername());
+        user.setUpdatedDate(LocalDateTime.now());
+        userRepository.save(user);
+        response.setUser(UserMapper.toUserDTO(user));
+        return ApiResponse.success(response, "Password Updated Successfully");
     }
 }

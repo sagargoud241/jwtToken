@@ -14,6 +14,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 @Component
 public class JwtUtil {
@@ -118,5 +120,16 @@ public class JwtUtil {
     // Remaining time in seconds
     public long getRemainingSeconds(String token) {
         return getRemainingMillis(token) / 1000;
+    }
+    public String getCurrentUsername() {
+        Authentication authentication = SecurityContextHolder
+                .getContext()
+                .getAuthentication();
+
+        if (authentication != null && authentication.isAuthenticated()) {
+            return authentication.getName(); // username
+        }
+
+        return null;
     }
 }

@@ -1,11 +1,17 @@
 package com.auth.ums.Service.AuthService;
 
 import com.auth.ums.JwtSecurity.JwtUtil;
-import com.auth.ums.RequestModel.LoginRequest;
+import com.auth.ums.RequestModel.Auth.ForgetPasswordRequest;
+import com.auth.ums.RequestModel.Auth.LoginRequest;
+import com.auth.ums.RequestModel.PasswordForgetRequestModel.AddPasswordResetRequest;
+import com.auth.ums.RequestModel.PasswordForgetRequestModel.PasswordChangeByToken;
 import com.auth.ums.RequestModel.RefreshTokenRequestModel.AddRefreshTokenRequest;
 import com.auth.ums.ResponseModel.ApiResponse;
+import com.auth.ums.ResponseModel.Auth.ForgetPasswordResponse;
 import com.auth.ums.ResponseModel.Auth.LoginResponse;
+import com.auth.ums.ResponseModel.ChangePasswordByToken.ChangePasswordByTokenResponse;
 import com.auth.ums.ResponseModel.Role.RoleDTO;
+import com.auth.ums.Service.PasswordResetService.PasswordResetService;
 import com.auth.ums.Service.RefreshTokenService.RefreshTokenService;
 import com.auth.ums.Service.RoleService.RoleService;
 import com.auth.ums.Service.UserService.UserService;
@@ -16,10 +22,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +42,8 @@ public class IAuthService implements AuthService {
     RoleService roleService;
     @Autowired
     RefreshTokenService refreshTokenService;
+    @Autowired
+    PasswordResetService passwordResetService;
 
     @Override
     public ApiResponse<LoginResponse> login(LoginRequest request) {
@@ -47,7 +55,7 @@ public class IAuthService implements AuthService {
 
         if (response != null && response.getCode().equals(ApiResponseCodes.SUCCESS)) {
 
-            ///  jwt tonke ko convcept use grnay
+            ///  jwt token ko concept use grnae
 
             // Extract roles
             List<String> roles = null;
@@ -152,4 +160,59 @@ public class IAuthService implements AuthService {
             return ApiResponse.failure("Invalid Token");
         }
     }
+
+    @Override
+    public ApiResponse<ForgetPasswordResponse> forgetPassword(ForgetPasswordRequest request) {
+        ForgetPasswordResponse response = new ForgetPasswordResponse();
+        ///  find by request.userName user service
+        var userResponse = userService.findByUserName(request.getUserName());
+
+        if (userResponse != null && userResponse.getCode().equals(ApiResponseCodes.SUCCESS)) {
+            ///success
+            ///PasswordReset add grnay
+            AddPasswordResetRequest addrequest = new AddPasswordResetRequest();
+            addrequest.setUserId(userResponse.getData().getUser().getId());
+            addrequest.setToken(UUID.randomUUID().toString());
+            addrequest.setResetSource("EMAIL");
+
+            LocalDateTime now = LocalDateTime.now();
+            // Add 60 minutes
+            LocalDateTime futureTime = now.plusMinutes(60);
+            addrequest.setTokenExpirationTime(futureTime);
+
+            var passwordResetResponse = passwordResetService.forgetPassword(addrequest);
+
+
+            if (passwordResetResponse != null && passwordResetResponse.getCode().equals(ApiResponseCodes.SUCCESS)) {
+                response.setDto(passwordResetResponse.getData().getDto());
+                return ApiResponse.success(response, passwordResetResponse.getMessage());
+            } else {
+                return ApiResponse.failure(passwordResetResponse.getMessage());
+            }
+        } else {
+            return ApiResponse.failure("User not found");
+        }
+    }
+
+    @Override
+    public ApiResponse<ChangePasswordByTokenResponse> passwordChangeByToken(PasswordChangeByToken request) {
+
+        ChangePasswordByTokenResponse response = new ChangePasswordByTokenResponse();
+
+        var forgetResponse = passwordResetService.changePasswordByToken(request);
+
+        if (forgetResponse != null && forgetResponse.getCode().equals(ApiResponseCodes.SUCCESS)) {
+
+            ///  change password by token and user id
+            var userResponse = userService.passwordChangeByToken(forgetResponse.getData().getDto().getUserId(), request);
+            if (userResponse != null && userResponse.getCode().equals(ApiResponseCodes.SUCCESS)) {
+                return ApiResponse.success(response, userResponse.getMessage());
+            } else {
+                return ApiResponse.failure("Invalid request");
+            }
+        }
+        return ApiResponse.failure("Invalid request");
+    }
+
+
 }

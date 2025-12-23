@@ -1,8 +1,7 @@
 package com.auth.ums.Mapper;
 
 import com.auth.ums.Models.User;
-import com.auth.ums.Models.UserRole;
-import com.auth.ums.RequestModel.AddUserRequest;
+import com.auth.ums.RequestModel.Auth.AddUserRequest;
 import com.auth.ums.ResponseModel.user.UserDto;
 
 import java.util.List;

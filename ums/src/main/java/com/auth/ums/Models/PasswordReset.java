@@ -1,26 +1,27 @@
 package com.auth.ums.Models;
-
 import jakarta.persistence.*;
 import lombok.Data;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
 @Entity
 @Table(name = "password_reset")
-public class PasswordReset extends BaseEntity{
+public class PasswordReset extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name="uuid",unique = true, nullable = false, updatable = false)
+    @Column(name = "uuid", unique = true, nullable = false, updatable = false)
     private UUID uuid = UUID.randomUUID();
 
     @Column(name = "user_id")
     private Long userId;
+
+    @Column(name = "new_Password")
+    private String newPassword;
 
     @Column(name = "token", nullable = false, unique = true)
     private String token;
