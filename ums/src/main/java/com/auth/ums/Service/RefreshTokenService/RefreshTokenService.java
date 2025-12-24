@@ -6,5 +6,6 @@ import com.auth.ums.ResponseModel.RefreshToken.RefreshTokenResponse;
 
 public interface RefreshTokenService {
     ApiResponse<RefreshTokenResponse> addRefreshToken(AddRefreshTokenRequest request);
+
     ApiResponse<RefreshTokenResponse> findByRefreshToken(String tokenHash);
 }

@@ -9,6 +9,6 @@ import lombok.Data;
 public class ProfileResponse {
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @JsonProperty("dto")
-    private UserDto dto;
+    @JsonProperty("my_profile")
+    private UserDto myProfile;
 }

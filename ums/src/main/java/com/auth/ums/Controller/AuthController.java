@@ -10,6 +10,7 @@ import com.auth.ums.ResponseModel.ApiResponse;
 import com.auth.ums.ResponseModel.Auth.ForgetPasswordResponse;
 import com.auth.ums.ResponseModel.Auth.LoginResponse;
 import com.auth.ums.ResponseModel.ChangePasswordByToken.ChangePasswordByTokenResponse;
+import com.auth.ums.ResponseModel.user.UserResponse;
 import com.auth.ums.Service.AuthService.AuthService;
 import com.auth.ums.Service.UserService.UserService;
 import jakarta.validation.Valid;
@@ -28,24 +29,27 @@ public class AuthController {
     private UserService userService;
     @Autowired
     private AuthService authService;
+
     @PostMapping("signup")
-    ResponseEntity<ApiResponse<User>> signup(@Valid @RequestBody AddUserRequest request){
+    ResponseEntity<ApiResponse<UserResponse>> signup(@Valid @RequestBody AddUserRequest request) {
         return ResponseEntity.ok(userService.adduser(request));
     }
+
     @PostMapping("login")
-    ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request){
+    ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
     }
+
     @PostMapping("refresh-token")
-    ResponseEntity<ApiResponse<LoginResponse>> refreshToken(@Valid @RequestBody RefreshTokenRequest request){
+    ResponseEntity<ApiResponse<LoginResponse>> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
         return ResponseEntity.ok(authService.refreshToken(request.getRefreshToken()));
     }
 
     @PostMapping("forget-password")
     ResponseEntity<ApiResponse<ForgetPasswordResponse>> forgetPassword(@Valid @RequestBody ForgetPasswordRequest request) {
         return ResponseEntity.ok(authService.forgetPassword(request));
-
     }
+
     @PostMapping("change-password")
     ResponseEntity<ApiResponse<ChangePasswordByTokenResponse>> changePassword(@Valid @RequestBody PasswordChangeByToken request) {
         return ResponseEntity.ok(authService.passwordChangeByToken(request));

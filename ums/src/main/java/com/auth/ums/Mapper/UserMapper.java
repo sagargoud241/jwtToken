@@ -2,6 +2,8 @@ package com.auth.ums.Mapper;
 
 import com.auth.ums.Models.User;
 import com.auth.ums.RequestModel.Auth.AddUserRequest;
+import com.auth.ums.RequestModel.Auth.DeleteUserRequest;
+import com.auth.ums.RequestModel.Auth.UpdateUserRequest;
 import com.auth.ums.ResponseModel.user.UserDto;
 
 import java.util.List;
@@ -24,6 +26,27 @@ public class UserMapper {
         user.setPhoneNumber(request.getPhoneNumber());
         user.setPassword(request.getPassword());
 
+        return user;
+    }
+
+    public static User updateUser( User user ,UpdateUserRequest request) {
+        if (request == null) {
+            return null;
+        }
+        user.setFirstName(request.getFirstName());
+        user.setMiddleName(request.getMiddleName());
+        user.setLastName(request.getLastName());
+        user.setAge(request.getAge());
+        user.setAddress(request.getAddress());
+        user.setPhoneNumber(request.getPhoneNumber());
+        return user;
+    }
+
+    public static User deleteUser(User user , DeleteUserRequest request) {
+        if (request == null) {
+            return null;
+        }
+        user.setRemarks(request.getRemarks());
         return user;
     }
 

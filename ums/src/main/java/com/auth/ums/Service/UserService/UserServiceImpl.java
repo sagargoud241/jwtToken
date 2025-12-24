@@ -5,7 +5,9 @@ import com.auth.ums.Mapper.UserMapper;
 import com.auth.ums.Models.User;
 import com.auth.ums.Repository.UserRepository;
 import com.auth.ums.RequestModel.Auth.AddUserRequest;
+import com.auth.ums.RequestModel.Auth.DeleteUserRequest;
 import com.auth.ums.RequestModel.Auth.LoginRequest;
+import com.auth.ums.RequestModel.Auth.UpdateUserRequest;
 import com.auth.ums.RequestModel.PasswordForgetRequestModel.PasswordChangeByToken;
 import com.auth.ums.RequestModel.ProfileModel.ChangePasswordRequest;
 import com.auth.ums.RequestModel.UserRoleRequestModel.AddUserRoleRequest;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,7 +37,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     JwtUtil jwtUtil;
     @Override
-    public ApiResponse<User> adduser(AddUserRequest request) {
+    public ApiResponse<UserResponse> adduser(AddUserRequest request) {
 
      //   UserResponse response = new UserResponse();
         Optional<User> optionalEmail = userRepository.findByEmail(request.getEmail());
@@ -168,4 +171,80 @@ public class UserServiceImpl implements UserService {
         response.setUser(UserMapper.toUserDTO(user));
         return ApiResponse.success(response, "Password Updated Successfully");
     }
+
+
+    @Override
+    public ApiResponse<UserResponse> getAllUser() {
+
+        try {
+            List<User> users = userRepository.findAll();
+
+            if (users.isEmpty()) {
+                return ApiResponse.failure("No User List");
+            }
+
+            UserResponse response = new UserResponse();
+            response.setUsers(
+                    users.stream()
+                            .map(UserMapper::toUserDTO)
+                            .toList()
+            );
+
+            return ApiResponse.success(response, "Fetch successfully");
+
+        } catch (Exception e) {
+            return ApiResponse.exception(e.getMessage());
+        }
+    }
+
+    @Override
+    public ApiResponse<UserResponse> updateUser(UpdateUserRequest request) {
+        UserResponse response = new UserResponse();
+        try {
+            Optional<User> optional = userRepository.findById(request.getId());
+            if (optional.isEmpty()) {
+                return ApiResponse.failure("User not Found");
+            }
+            if (optional.get().getIsDeleted()) {
+                return ApiResponse.failure("User not Found");
+            }
+            User user = optional.get();
+            user = UserMapper.updateUser(user, request);
+            user.setIsActive(Boolean.TRUE);
+            user.setUpdatedDate(LocalDateTime.now());
+            user.setUpdatedBy(jwtUtil.getCurrentUsername());
+            userRepository.save(user);
+            response.setUser(UserMapper.toUserDTO(user));
+            return ApiResponse.success(response, "Update SuccessFully");
+        } catch (Exception e) {
+            return ApiResponse.exception(e.getMessage());
+        }
+
+    }
+
+    @Override
+    public ApiResponse<UserResponse> deleteUser(DeleteUserRequest request) {
+        UserResponse response = new UserResponse();
+        try {
+            Optional<User> optional = userRepository.findById(request.getId());
+            if (optional.isEmpty()) {
+                return ApiResponse.failure("User not Found");
+            }
+            if (optional.get().getIsDeleted()) {
+                return ApiResponse.failure("User not Found");
+            }
+            User user = optional.get();
+            user = UserMapper.deleteUser(user, request);
+            user.setIsActive(Boolean.FALSE);
+            user.setIsDeleted(true);
+            user.setUpdatedDate(LocalDateTime.now());
+            user.setUpdatedBy(jwtUtil.getCurrentUsername());
+            userRepository.save(user);
+            response.setUser(UserMapper.toUserDTO(user));
+            return ApiResponse.success(response, "Delete SuccessFully");
+        } catch (Exception e) {
+            return ApiResponse.exception(e.getMessage());
+        }
+    }
+
 }

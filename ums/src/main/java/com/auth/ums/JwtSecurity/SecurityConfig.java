@@ -45,9 +45,9 @@ public class SecurityConfig {
 
                                 //********Role controller end *********///
 
-                                //.requestMatchers("/api/v1/profile/reset-password").hasRole("ADMIN")
-                                //.requestMatchers("/api/v1/profile/reset-password").hasRole("GUEST")
-                                .requestMatchers("/api/v1/profile/reset-password").hasAnyRole("ADMIN", "GUEST")
+                                .requestMatchers("/api/v1/user-role/**").hasRole("ADMIN")
+                                .requestMatchers("/api/v1/user/**").hasRole("ADMIN")
+                                .requestMatchers("/api/v1/profile/**").hasAnyRole("ADMIN", "GUEST")
 
                                 .anyRequest().authenticated()
 
