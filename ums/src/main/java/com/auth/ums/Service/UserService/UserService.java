@@ -8,7 +8,10 @@ import com.auth.ums.RequestModel.Auth.UpdateUserRequest;
 import com.auth.ums.RequestModel.PasswordForgetRequestModel.PasswordChangeByToken;
 import com.auth.ums.RequestModel.ProfileModel.ChangePasswordRequest;
 import com.auth.ums.ResponseModel.ApiResponse;
+import com.auth.ums.ResponseModel.user.UserDto;
 import com.auth.ums.ResponseModel.user.UserResponse;
+import com.auth.ums.ResponseModel.user.UserResponseDto;
+import com.auth.ums.Utility.PageResponse;
 import jakarta.validation.constraints.NotBlank;
 
 public interface UserService {
@@ -30,5 +33,10 @@ public interface UserService {
 
     ApiResponse<UserResponse> deleteUser(DeleteUserRequest request);
 
+
+
+    PageResponse<UserResponseDto> searchUsers(String keyword, int page, int size, String sortBy);
+
+    ApiResponse<PageResponse<UserDto>> searchUsersNew(String keyword, int page, int size, String sortBy);
 
 }

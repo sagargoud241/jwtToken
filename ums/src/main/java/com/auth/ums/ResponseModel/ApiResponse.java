@@ -34,6 +34,9 @@ public class ApiResponse <T>{
         return new ApiResponse<>(ApiResponseCodes.INVALID_REQUEST, message,null);
     }
 
+    public static <T> ApiResponse<T> nodatafound(T data, String message) {
+        return new ApiResponse<>(ApiResponseCodes.FAILURE, message, data);
+    }
 
     // --- Builder Pattern ---
     public static class Builder<T> {

@@ -2,11 +2,14 @@ package com.auth.ums.Repository;
 
 import com.auth.ums.Models.User;
 import jakarta.validation.constraints.NotBlank;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface UserRepository extends JpaRepository<User,Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(@NotBlank(message = "Email is Required ") String email);
 
     Optional<User> findByPhoneNumber(@NotBlank(message = "PhoneNumber is Required ") String phoneNumber);
@@ -14,5 +17,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     Optional<User> findByEmailAndIsActive(@NotBlank(message = "Email is Required ") String email, boolean isActive);
 
     Optional<User> findByIdAndIsActive(Long id, boolean isActive);
+
+    Page<User> findAll(Specification<User> spec, Pageable pageable);
 }
 

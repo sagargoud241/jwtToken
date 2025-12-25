@@ -72,6 +72,7 @@ public class IAuthService implements AuthService {
             }
 
             // Generate tokens
+            log.info("Generating JWT tokens for email: {}", response.getData().getUser().getEmail());
             String accessToken = jwtUtil.generateAccessToken(response.getData().getUser().getEmail(), roles);
             String refreshToken = jwtUtil.generateRefreshToken(response.getData().getUser().getEmail());
             authResponse.setToken(accessToken);
@@ -92,9 +93,11 @@ public class IAuthService implements AuthService {
             refTok.setExpiresAt(localDateTime);
             refreshTokenService.addRefreshToken(refTok);
 
+            log.info("Login completed successfully for email: {}", request.getEmail());
             return ApiResponse.success(authResponse, "login success");
 
         } else {
+            log.warn("Login failed for email: {}", request.getEmail());
             return ApiResponse.failure("Either email or password is wrong");
         }
 
@@ -128,9 +131,9 @@ public class IAuthService implements AuthService {
 
             //get user info by user id
 
-            var userData=userService.findByUserId(response.getData().getDto().getUserId());
+            var userData = userService.findByUserId(response.getData().getDto().getUserId());
 
-            if(userData!=null&& userData.getCode().equals(ApiResponseCodes.SUCCESS)){
+            if (userData != null && userData.getCode().equals(ApiResponseCodes.SUCCESS)) {
                 // Generate tokens
                 String accessToken = jwtUtil.generateAccessToken(userData.getData().getUser().getEmail(), roles);
                 String refreshToken = jwtUtil.generateRefreshToken(userData.getData().getUser().getEmail());
@@ -151,21 +154,27 @@ public class IAuthService implements AuthService {
                 LocalDateTime localDateTime = LocalDateTime.parse(formattedExpiryTime, formatter);
                 refTok.setExpiresAt(localDateTime);
                 refreshTokenService.addRefreshToken(refTok);
+                log.info("New refresh token saved successfully for userId {}", JsonUtils.toJson(userData.getData().getUser().getId()));
+                log.info("Token refresh completed successfully for userId{}", JsonUtils.toJson(refreshToken));
                 return ApiResponse.success(authResponse, "refreshed  successfully");
-            }else{
+            } else {
+                log.warn("User not found or invalid for userId");
                 return ApiResponse.failure("Invalid user");
             }
 
         } else {
+            log.warn("Invalid or expired refresh token");
             return ApiResponse.failure("Invalid Token");
         }
     }
 
     @Override
     public ApiResponse<ForgetPasswordResponse> forgetPassword(ForgetPasswordRequest request) {
+        log.info("Forget password request received for username: {}", JsonUtils.toJson(request));
         ForgetPasswordResponse response = new ForgetPasswordResponse();
         ///  find by request.userName user service
         var userResponse = userService.findByUserName(request.getUserName());
+        log.info("User lookup response for username: {}", JsonUtils.toJson(userResponse));
 
         if (userResponse != null && userResponse.getCode().equals(ApiResponseCodes.SUCCESS)) {
             ///success
@@ -181,36 +190,45 @@ public class IAuthService implements AuthService {
             addrequest.setTokenExpirationTime(futureTime);
 
             var passwordResetResponse = passwordResetService.forgetPassword(addrequest);
+            log.info("Password reset service response for userId: {}", JsonUtils.toJson(passwordResetResponse));
 
 
             if (passwordResetResponse != null && passwordResetResponse.getCode().equals(ApiResponseCodes.SUCCESS)) {
                 response.setDto(passwordResetResponse.getData().getDto());
+                log.info("Forget password process completed successfully");
                 return ApiResponse.success(response, passwordResetResponse.getMessage());
+
             } else {
+                log.warn("Forget password failed for userId");
                 return ApiResponse.failure(passwordResetResponse.getMessage());
             }
         } else {
+            log.warn("Forget password failed. User not found for username: {}", request.getUserName());
             return ApiResponse.failure("User not found");
         }
     }
 
     @Override
     public ApiResponse<ChangePasswordByTokenResponse> passwordChangeByToken(PasswordChangeByToken request) {
+        log.info("Password change by token request received");
 
         ChangePasswordByTokenResponse response = new ChangePasswordByTokenResponse();
-
+        log.info("Password reset token validation response: {}", JsonUtils.toJson(response));
         var forgetResponse = passwordResetService.changePasswordByToken(request);
 
         if (forgetResponse != null && forgetResponse.getCode().equals(ApiResponseCodes.SUCCESS)) {
 
             ///  change password by token and user id
             var userResponse = userService.passwordChangeByToken(forgetResponse.getData().getDto().getUserId(), request);
+            log.info("Password change response for userId: {}", JsonUtils.toJson(userResponse));
             if (userResponse != null && userResponse.getCode().equals(ApiResponseCodes.SUCCESS)) {
                 return ApiResponse.success(response, userResponse.getMessage());
             } else {
+                log.warn("Password change failed");
                 return ApiResponse.failure("Invalid request");
             }
         }
+        log.warn("Invalid or expired password reset token");
         return ApiResponse.failure("Invalid request");
     }
 
