@@ -7,11 +7,11 @@ import lombok.Data;
 @Data
 public class PasswordChangeByToken {
     @NotBlank(message = "New PassWord is Required ")
-    @JsonProperty("new_Password")
+    @JsonProperty("new_password")
     private String newPassword;
 
     @NotBlank(message = "Conform PassWord is Required ")
-    @JsonProperty("conform_Password")
+    @JsonProperty("conform_password")
     private String conformPassword;
 
     @NotBlank(message = "Token is Required ")
