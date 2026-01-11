@@ -1,6 +1,8 @@
 package com.auth.ums.JwtSecurity;
 
 
+import com.auth.ums.Models.User;
+import com.auth.ums.Repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -131,5 +133,26 @@ public class JwtUtil {
         }
 
         return null;
+    }
+
+    // ===================== ✅ NEW METHOD (ADDED) =====================
+    /**
+     * Get logged-in user's ID from JWT token
+     * Uses Spring Security Context (BEST PRACTICE)
+     */
+    public Long getUserIdFromToken(UserRepository userRepository) {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        }
+
+        String username = authentication.getName();
+
+        return userRepository.findByEmail(username)
+                .map(User::getId)
+                .orElse(null);
     }
 }

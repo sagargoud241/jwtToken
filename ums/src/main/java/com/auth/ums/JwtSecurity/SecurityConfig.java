@@ -48,6 +48,7 @@ public class SecurityConfig {
                                 .requestMatchers("/api/v1/user-role/**").hasRole("ADMIN")
                                 .requestMatchers("/api/v1/user/**").hasRole("ADMIN")
                                 .requestMatchers("/api/v1/profile/**").hasAnyRole("ADMIN", "GUEST")
+                                .requestMatchers("/api/v1/profile-picture/**").hasAnyRole("ADMIN", "GUEST")
 
                                 .anyRequest().authenticated()
 
